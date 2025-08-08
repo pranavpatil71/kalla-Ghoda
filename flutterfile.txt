@@ -1,0 +1,286 @@
+this file contains logic for development on flutter
+
+import tkinter as tk
+import gui_Maintainance as m10
+import gui_userdetails5 as ud1
+import gui_visualise_maintainanceData as mv1
+import gui_fuelmeter3 as fm3
+
+FrameHome = tk.Tk()
+FrameHome.title("HomeScreen")
+FrameHome.geometry("1000x450")
+
+Btn_UserDetails = tk.Button(FrameHome,text="Add Your Details",command=ud1.userdata).pack(pady=5)
+Btn_UserMaintenance = tk.Button(FrameHome,text="Add Your Maintenance",command=m10.maintenace).pack(pady=5)
+btn_fuelConsumption = tk.Button(FrameHome,text="Add Fuel Consumption", command=fm3.fuelmeter).pack(pady=5)
+btn_ShowExpenditure = tk.Button(FrameHome,text="Your Maintenance Investment",command=mv1.visualize_data).pack(pady=5)
+
+tk.mainloop()
+
+
+
+---gui_userdetails5---
+
+import tkinter as tk
+from tkinter import messagebox
+import sqlite3 as qlit
+
+def userdata():
+    def submit():
+        uname=UserNameEntry.get()
+        umobile=UserMobileNoEntry.get()
+        ubike=UserBikeNameEntry.get()
+        connection=qlit.connect('AddMaintanace_db.db')
+        cursor=connection.cursor()
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS userdata (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL,
+                usercontact TEXT NOT NULL,
+                userbike TEXT NOT NULL
+            )            
+        ''')
+
+        cursor.execute('INSERT INTO userdata (username,usercontact,userbike) values(?,?,?)',(uname,umobile,ubike))
+        connection.commit()
+        connection.close()
+        print("Data added successfully")
+        messagebox.showinfo("Greetings", "Congrats, Your Data Saved Successfully !!!")
+
+    frame1 = tk.Tk()
+    frame1.title("Kallaa Ghoda")
+    frame1.geometry("450x150")
+
+    UserNameLabel=tk.Label(frame1,text="User Name :").pack()
+    UserNameEntry=tk.Entry(frame1)
+    UserNameEntry.pack()
+
+    UserMobileNoLabel=tk.Label(frame1,text="Mobile No :").pack()
+    UserMobileNoEntry=tk.Entry(frame1)
+    UserMobileNoEntry.pack()
+
+    UserBikeNameLabel=tk.Label(frame1,text="Bike Name :").pack()
+    UserBikeNameEntry=tk.Entry(frame1)
+    UserBikeNameEntry.pack()
+
+    submitButton= tk.Button(frame1, text="Submit", command=submit).pack(pady=5)
+    tk.mainloop()
+
+----gui_maintenace
+
+
+def maintenace():
+    
+    from tkinter import messagebox
+    import tkinter as tk
+    import sqlite3 as glit
+
+    def submit_maintainance():
+            messagebox.showinfo("Success","Details Added successfully")
+
+    def db_connect():
+        #This function create database with respect to your coloums
+        problemdetails=Ntry_ProblemDetails.get()
+        part_name=Ntry_SparePart.get()
+        part_cost=Ntry_PartCost.get()
+        laborcost=Ntry_LaborCost.get()
+        addon=Ntry_AdditionalCost.get()
+        desc=Ntry_Descriptions.get()
+
+        conn = glit.connect('AddMaintanace_db.db')
+        cursor = conn.cursor()
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS user_maintenance  (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    ProblemDetails TEXT NOT NULL,
+                    SparePart TEXT NOT NULL,
+                    SpareCost TEXT NOT NULL,
+                    LaborCost TEXT NOT NULL,
+                    AdditionalCost TEXT NOT NULL,
+                    Descriptions TEXT NOT NULL                    
+                )
+        ''')
+
+        #cursor.execute('INSERT INTO user_maintenance (SparePart) VALUES (?)',('C'))
+        cursor.execute('INSERT INTO user_maintenance (ProblemDetails,SparePart,SpareCost,LaborCost,AdditionalCost,Descriptions) VALUES (?,?,?,?,?,?)', (problemdetails,part_name,part_cost,laborcost,addon,desc))
+        conn.commit()
+        print("Data Entered Successfully")
+        conn.close()
+
+
+    FrameMaintainance =tk.Tk()
+    FrameMaintainance.title("Add Maintance Details")
+    FrameMaintainance.geometry("250x400")
+
+    Lbl_ProblemDetails= tk.Label(FrameMaintainance, text="Problem Details").pack()
+    Ntry_ProblemDetails = tk.Entry(FrameMaintainance)
+    Ntry_ProblemDetails.pack() # since pack widgets seperately
+
+    Lbl_SparePart= tk.Label(FrameMaintainance, text="Changed Spare Part Name").pack()
+    Ntry_SparePart = tk.Entry(FrameMaintainance)
+    Ntry_SparePart.pack() 
+
+    Lbl_PartCost= tk.Label(FrameMaintainance, text="Spare part cost").pack()
+    Ntry_PartCost = tk.Entry(FrameMaintainance)
+    Ntry_PartCost.pack() 
+
+    Lbl_LaborCost= tk.Label(FrameMaintainance, text="Labor cost").pack()
+    Ntry_LaborCost = tk.Entry(FrameMaintainance)
+    Ntry_LaborCost.pack() 
+
+    Lbl_AdditionalCost= tk.Label(FrameMaintainance, text="Additional cost if any").pack()
+    Ntry_AdditionalCost = tk.Entry(FrameMaintainance)
+    Ntry_AdditionalCost.pack() 
+
+    Lbl_Descriptions= tk.Label(FrameMaintainance, text="Descriptions").pack()
+    Ntry_Descriptions = tk.Entry(FrameMaintainance)
+    Ntry_Descriptions.pack() 
+
+    btn_submit = tk.Button(FrameMaintainance, text="Submit", command= db_connect).pack(pady=5)
+
+    tk.mainloop()
+
+def main():
+     maintenace()
+
+if __name__ == "__main__" :
+    main()
+
+--- visualize maintainace.py
+
+import tkinter as tk
+import sqlite3 as qlit
+
+def visualize_data():
+    conn = qlit.connect('AddMaintanace_db.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT * FROM user_maintenance;
+    ''')
+    #SELECT ProblemDetails FROM user_maintenance WHERE SparePart='b'; 
+    data=cursor.fetchall()
+    display(data)
+    #print(data)
+    conn.commit()
+    conn.close()
+
+def display(data):
+    displayframe=tk.Tk()
+    displayframe.title("OutPut of data")
+    displayframe.geometry("300x150")
+    for i in data:
+        tk.Label(displayframe,text=i).pack(pady=5)
+    tk.mainloop()
+
+----fuelmeter.py
+
+import tkinter as tk
+import gui_fuel_fulltankmethod_def as ftm1
+import gui_fuel_reservetankmethod_def as rtm1
+
+class fuelmeterclass:
+    def __init__ (self,fuelframe):
+        self.tankmethod=tk.StringVar()
+        tk.Radiobutton(fuelframe,text='Full tank method',variable=self.tankmethod,value="fullTankMethod").pack(pady=5)
+        tk.Radiobutton(fuelframe,text='reserve indicator method', variable=self.tankmethod,value="reserveTankMethod").pack(pady=5)
+        #tk.Radiobutton(fuelframe, text="reservetank", variable=self.tankmethod, value="ReserveTankMethodVariable").pack(pady=5)
+        tk.Button(fuelframe,text="submit",command=self.submit).pack(pady=5)
+
+    def submit(self):
+        value=self.tankmethod.get()
+        print("Hi There, You are Into Milage Calculation method", value.lower())
+        if value=='fullTankMethod':
+            milage=ftm1.fulltankmethod()
+            print("Milage is - ",milage)
+        elif value=='reserveTankMethod':
+            rtm1.reserve_tank()
+        tk.mainloop()  
+
+def fuelmeter():
+    fuelframe=tk.Toplevel(bg="lightblue", width=200, height=100)
+    fuelframe.title("Fuel Meter")
+    fuelframe.geometry("500x250")
+    tk.Label(fuelframe,text="Check Your Bikes Milage Based on Below Parameter").pack(pady=5)
+    tk.Label(fuelframe,text="Select only one method at a time").pack(pady=5)
+    c1=fuelmeterclass(fuelframe)
+
+
+---reservetank method--
+
+def reserve_tank():
+    print("Lets assume reserve tank size of 2.5 liter : ")
+    response=input("is your Bike into a reaserve mode Add Yes or No : ")
+    if response==('Yes' or 'yes' or 'y' or 'Y'):
+        print("response as Yes, Please add more than 2.5 liters petrol for best result")
+        read1=int(input("Enter reading odo : "))
+        fu1=int(input("Enter fuel ur adding : "))
+        read2=int(input("Enter odo when bike got again into researve : "))
+        milage = (read2-read1)/fu1
+        print("Milage", milage)
+
+    elif response==('No' or 'no' or 'n' or 'N'):
+        print("response as No")
+        print("Please any liters of petrol as more than 2.5 already exist into your tank")
+        ful1=int(input("Enter fuel ur adding : "))
+        read3=int(input("Enter odo reading while first fueling : "))
+        print("Please ride vehicle carefully and put a petrol again on reasearve once u back to fuel station")
+        read4=int(input("Enter odo when bike got into researve : "))
+        ful2= int(input("Enter Fuel you are adding "))
+        read5=int(input("Enter odo when bike got into researve again: "))
+
+        milage = (read5-read4)/ful2
+        print("Milage", milage)
+
+    itr=input("For More safer side, lets try multiple iteration, to continue Yes stop No")
+    if(itr=='Yes'):
+    #find milage0 with this data 
+
+        print("You will be adding fuel once your know fuel Indicator or bike got researve")
+        odo1=int(input("Enter ODO Meter Reading Before fueling : "))
+        fuel1=int(input("Enter Fuel in liters you have added : "))
+        odo2=int(input("Enter ODO reading once bike goes reserve nd u filled petrol : "))
+        odo3=int(input("Optional reading when u add petrol in case later : "))
+        fuel2=int(input("Enter quantity of fuel you have added : "))
+        odo4=int(input("Enter ODO reading once bike goes reaserve again : "))
+
+        total_fuel_consumed=fuel1+fuel2
+        avg2=(odo4-odo3)/fuel2
+        avg1=(odo2-odo1)/fuel1
+        avg3=(avg2+avg1)/2
+
+        print("milage1 ",avg1 )
+        print("milage2 ",avg2)
+        print("avgerage milage of bike ",avg3)
+
+#reserve_tank()
+
+
+----fulltankmethod--
+
+def fulltankmethod():
+    reading = input("Enter fuel tank reading: (Empty/Not So Full/Reserve) : ")
+    # expected liter remaining
+    filledpetrol = float(input("Amount of petrol filled to completely fill your tank: "))
+    #totalfuelinbike = reading + filledpetrol
+
+    odoread = float(input("Reading of odoo while first fuelling: "))
+    print("Please ride vehicle carefully and put a petrol again once u back to fuel station")
+    odo2read = float(input("Enter odoo reading when fuel consumed, while second refuelling: "))
+    filledpetrol2= float(input("Amount of petrol filled to completely fill your tank: "))
+
+    # odo difference gives you reading 
+    # divide it by petrol filled to get mileage 
+    ododiff = odo2read - odoread
+    milage = ododiff / filledpetrol2
+
+    return milage
+
+
+
+
+
+
+
+
+
+
