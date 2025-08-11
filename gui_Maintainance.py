@@ -11,6 +11,7 @@ def maintenace():
 
     def submit_maintainance():
             messagebox.showinfo("Success","Details Added successfully")
+            FrameMaintainance.destroy()# remove this incase of multiple data entry
 
     def db_connect():
         #This function create database with respect to your coloums
@@ -39,6 +40,7 @@ def maintenace():
         cursor.execute('INSERT INTO user_maintenance (ProblemDetails,SparePart,SpareCost,LaborCost,AdditionalCost,Descriptions) VALUES (?,?,?,?,?,?)', (problemdetails,part_name,part_cost,laborcost,addon,desc))
         conn.commit()
         print("Data Entered Successfully")
+        submit_maintainance()
         conn.close()
 
 

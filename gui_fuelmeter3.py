@@ -16,9 +16,12 @@ class fuelmeterclass:
         if value=='fullTankMethod':
             milage=ftm1.fulltankmethod()
             print("Milage is - ",milage)
+            tk.mainloop()
         elif value=='reserveTankMethod':
             rtm1.reserve_tank()
-        tk.mainloop()  
+            tk.mainloop()
+        
+          
 
 def fuelmeter():
     fuelframe=tk.Toplevel(bg="lightblue", width=200, height=100)

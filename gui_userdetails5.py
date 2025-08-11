@@ -23,6 +23,7 @@ def userdata():
         connection.close()
         print("Data added successfully")
         messagebox.showinfo("Greetings", "Congrats, Your Data Saved Successfully !!!")
+        frame1.destroy()
 
     frame1 = tk.Tk()
     frame1.title("Kallaa Ghoda")
