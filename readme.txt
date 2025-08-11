@@ -10,3 +10,8 @@ tasks that are remaining -
     4. 'Fuel inputs' page directions to new pages that are created.
     5. Fuel data methods into database addition of fuel.
     6. Map all three pages to users page for more clearification
+
+Work done so far
+    1. Created 4 windows as part of GUI
+    2. Main page +3
+    3. Working on finding actual average
